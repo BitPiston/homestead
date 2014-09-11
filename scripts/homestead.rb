@@ -67,5 +67,31 @@ class Homestead
         end
       end
     end
+
+    # Install crontabs
+    if settings.has_key?("crontabs")
+
+      # Empty /home/vagrant/.crontabs file
+      config.vm.provision "shell" do |s|
+        s.inline = "cat /dev/null > /home/vagrant/.crontabs"
+      end
+
+      # Fill /home/vagrant/.crontabs file with crontab rows
+      settings["crontabs"].each do |crontab|
+        crontab.each do |key, val|
+          next if key == "command"
+          crontab[key] = "\\*" unless val != nil && val != '*'
+        end
+        config.vm.provision "shell" do |s|
+          s.inline = "echo #{crontab["minute"]} #{crontab["hour"]} #{crontab["monthday"]} #{crontab["month"]} #{crontab["weekday"]} #{crontab["command"] } >> /home/vagrant/.crontabs"
+        end
+      end
+
+      # Install all crontabs from /home/vagrant/.crontabs file for 'root'
+      config.vm.provision "shell" do |s|
+        s.inline = "crontab -u root /home/vagrant/.crontabs"
+      end
+    end
+
   end
 end
