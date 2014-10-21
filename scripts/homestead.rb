@@ -5,7 +5,7 @@ class Homestead
     config.vm.hostname = "homestead"
 
     # Configure A Private Network IP
-    config.vm.network :private_network, ip: settings["ip"] ||= "192.168.10.10"
+    config.vm.network :private_network, ip: settings["ip"] ||= "10.0.0.100"
 
     # Configure A Few VirtualBox Settings
     config.vm.provider "virtualbox" do |vb|
