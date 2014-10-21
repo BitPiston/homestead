@@ -1,7 +1,7 @@
 class Homestead
   def Homestead.configure(config, settings)
     # Configure The Box
-    config.vm.box = "laravel/homestead"
+    config.vm.box = "ubuntu/trusty64"
     config.vm.hostname = "homestead"
 
     # Configure A Private Network IP
@@ -19,6 +19,12 @@ class Homestead
     config.vm.network "forwarded_port", guest: 80, host: 8000
     config.vm.network "forwarded_port", guest: 3306, host: 33060
     config.vm.network "forwarded_port", guest: 5432, host: 54320
+    config.vm.network "forwarded_port", guest: 35729, host: 35729
+
+    # Run The Base Provisioning Script
+    config.vm.provision "shell" do |s|
+      s.path = "./scripts/provision.sh"
+    end
 
     # Configure The Public Key For SSH Access
     config.vm.provision "shell" do |s|
