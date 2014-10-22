@@ -3,6 +3,7 @@ class Homestead
     # Configure The Box
     config.vm.box = "ubuntu/trusty64"
     config.vm.hostname = "homestead"
+    config.ssh.pty = true
 
     # Configure A Private Network IP
     config.vm.network :private_network, ip: settings["ip"] ||= "10.0.0.100"
