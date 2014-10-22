@@ -17,15 +17,14 @@ class Homestead
       vb.customize ["modifyvm", :id, "--ostype", "Ubuntu_64"]
     end
 
-    # Configure Port Forwarding To The Box
-    config.vm.network "forwarded_port", guest: 80, host: 8000
-    config.vm.network "forwarded_port", guest: 3306, host: 33060
-    config.vm.network "forwarded_port", guest: 5432, host: 54320
-    config.vm.network "forwarded_port", guest: 35729, host: 35729
-
     # Run The Base Provisioning Script
     config.vm.provision "shell" do |s|
       s.path = "./scripts/provision.sh"
+    end
+
+    # Configure Port Forwarding To The Box
+    settings["ports"].each do |port|
+      config.vm.network "forwarded_port", guest: port["guest"], host: port["host"] ||= nil
     end
 
     # Configure The Public Key For SSH Access

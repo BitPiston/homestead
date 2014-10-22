@@ -8,6 +8,16 @@ authorize: ~/.ssh/id_rsa.pub
 keys:
     - ~/.ssh/id_rsa
 
+ports:
+    - host: 8000
+      guest: 80
+    - host: 33060
+      guest: 3306
+    - host: 54320
+      guest: 5432
+    - host: 35729
+      guest: 35729
+
 folders:
     - map: ~/Code
       to: /home/vagrant/Code
