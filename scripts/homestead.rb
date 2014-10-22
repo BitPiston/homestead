@@ -82,6 +82,21 @@ class Homestead
         end
         config.hostsupdater.aliases = hosts
     end
+
+    # Override php.ini settings
+    if settings.has_key?("php_config")
+      filename = '/etc/php5/fpm/php.ini'
+
+      settings["php_config"].each do |var|
+        key = var.map{ |key, value| key }[0]
+        value = var.map{ |key, value| value }[0]
+
+        config.vm.provision "shell" do |s|
+            s.inline = "sed -i 's/^\\(#{key}\\).*/\\1 \= #{value}/' #{filename}"
+        end
+      end
+    end
+
     # Configure All Of The Server Environment Variables
     if settings.has_key?("variables")
       settings["variables"].each do |var|
