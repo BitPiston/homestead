@@ -5,6 +5,7 @@ alias h='cd ~'
 alias c='clear'
 
 alias npm='npm --no-bin-links'
+alias artisan="php artisan"
 
 function serve() {
 	if [[ "$1" && "$2" ]]
@@ -17,4 +18,3 @@ function serve() {
 		echo "  serve domain path"
 	fi
 }
-
