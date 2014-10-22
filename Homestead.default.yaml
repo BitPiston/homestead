@@ -11,11 +11,15 @@ keys:
 ports:
     - host: 8000
       guest: 80
-    - host: 33060
+    - host: 33060   # MySQL / MariaDB
       guest: 3306
-    - host: 54320
+    - host: 54320   # PostgreSQL
       guest: 5432
-    - host: 35729
+    - host: 63790   # Redis
+      guest: 6379
+    - host: 11211   # Memcached
+      guest: 11211
+    - host: 35729   # LiveReload
       guest: 35729
 
 folders:
