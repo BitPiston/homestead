@@ -4,8 +4,6 @@
 
 apt-get update
 
-apt-get upgrade -y
-
 # Force locale to avoid common localization pitfalls
 
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
@@ -35,6 +33,8 @@ add-apt-repository 'deb http://mirrors.digitalocean.com/mariadb/repo/10.0/ubuntu
 # Update Package Lists
 
 apt-get update
+
+apt-get upgrade -y
 
 # Install Some Basic Packages
 
