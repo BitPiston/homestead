@@ -95,10 +95,11 @@ class Homestead
     # Create Databases
     settings["databases"].each do |database|
       config.vm.provision "shell" do |s|
+        s.privileged = false
         if (database["type"] == "mysql")
-          s.inline = "mysql --user=\"root\" --password=\"secret\" -e \"CREATE DATABASE $1\";"
+          s.inline = "mysql --user=\"root\" --password=\"secret\" -e \"CREATE DATABASE $1;\" ; true"
         elsif (database["type"] == "postgresql")
-          s.inline = "sudo -u postgres /usr/bin/createdb --echo --owner=homestead $1"
+          s.inline = "sudo -u postgres /usr/bin/createdb --echo --owner=homestead $1 ; true"
         end
         s.args = [database["name"]]
       end
