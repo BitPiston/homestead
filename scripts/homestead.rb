@@ -17,6 +17,17 @@ class Homestead
       vb.customize ["modifyvm", :id, "--ostype", "Ubuntu_64"]
     end
 
+    # Vagrant Cachier
+    if Vagrant.has_plugin?("vagrant-cachier")
+      config.cache.scope = :box
+      config.cache.enable :apt
+      config.cache.enable :bower
+      config.cache.enable :composer
+      config.cache.enable :npm
+      config.cache.enable :generic, { "wget" => { cache_dir: "/var/cache/wget" } }
+      config.cache.synced_folder_opts = { type: :nfs, mount_options: ['rw', 'vers=3', 'tcp', 'nolock'] }
+    end
+
     # Run The Base Provisioning Script
     config.vm.provision "shell" do |s|
       s.path = "./scripts/provision.sh"
