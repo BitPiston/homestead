@@ -82,6 +82,18 @@ class Homestead
         config.hostsupdater.aliases = hosts
     end
 
+    # Create Databases
+    settings["databases"].each do |database|
+      config.vm.provision "shell" do |s|
+        if (database["type"] == "mysql")
+          s.inline = "mysql --user=\"root\" --password=\"secret\" -e \"CREATE DATABASE $1\";"
+        elsif (database["type"] == "postgresql")
+          s.inline = "sudo -u postgres /usr/bin/createdb --echo --owner=homestead $1"
+        end
+        s.args = [database["name"]]
+      end
+    end
+
     # Override php.ini settings
     if settings.has_key?("php_config")
       filename = '/etc/php5/fpm/php.ini'
