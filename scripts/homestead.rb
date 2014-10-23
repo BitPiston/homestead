@@ -74,13 +74,12 @@ class Homestead
     # Install All The Configured Nginx Sites
     settings["sites"].each do |site|
       config.vm.provision "shell" do |s|
-          if (site.has_key?("hhvm") && site["hhvm"])
-            s.inline = "bash /vagrant/scripts/serve-hhvm.sh $1 $2"
-            s.args = [site["map"], site["to"]]
-          else
-            s.inline = "bash /vagrant/scripts/serve.sh $1 $2"
-            s.args = [site["map"], site["to"]]
-          end
+        if (site.has_key?("hhvm") && site["hhvm"])
+          s.inline = "bash /vagrant/scripts/serve-hhvm.sh $1 $2"
+        else
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2"
+        end
+        s.args = [site["map"], site["to"]]
       end
     end
 
@@ -108,13 +107,11 @@ class Homestead
     # Override php.ini settings
     if settings.has_key?("php_config")
       filename = '/etc/php5/fpm/php.ini'
-
       settings["php_config"].each do |var|
         key = var.map{ |key, value| key }[0]
         value = var.map{ |key, value| value }[0]
-
         config.vm.provision "shell" do |s|
-            s.inline = "sed -i 's/^\\(#{key}\\).*/\\1 \= #{value}/' #{filename}"
+          s.inline = "sed -i 's/^\\(#{key}\\).*/\\1 \= #{value}/' #{filename}"
         end
       end
     end
@@ -123,20 +120,18 @@ class Homestead
     if settings.has_key?("variables")
       settings["variables"].each do |var|
         config.vm.provision "shell" do |s|
-            s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php5/fpm/php-fpm.conf && service php5-fpm restart"
-            s.args = [var["key"], var["value"]]
+          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php5/fpm/php-fpm.conf && service php5-fpm restart"
+          s.args = [var["key"], var["value"]]
         end
       end
     end
 
     # Install crontabs
     if settings.has_key?("crontabs")
-
       # Empty /home/vagrant/.crontabs file
       config.vm.provision "shell" do |s|
         s.inline = "cat /dev/null > /home/vagrant/.crontabs"
       end
-
       # Fill /home/vagrant/.crontabs file with crontab rows
       settings["crontabs"].each do |crontab|
         crontab.each do |key, val|
@@ -147,7 +142,6 @@ class Homestead
           s.inline = "echo #{crontab["minute"]} #{crontab["hour"]} #{crontab["monthday"]} #{crontab["month"]} #{crontab["weekday"]} #{crontab["command"] } >> /home/vagrant/.crontabs"
         end
       end
-
       # Install all crontabs from /home/vagrant/.crontabs file for 'root'
       config.vm.provision "shell" do |s|
         s.inline = "crontab -u root /home/vagrant/.crontabs"
