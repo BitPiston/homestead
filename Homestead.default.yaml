@@ -30,6 +30,12 @@ sites:
     - map: homestead.app
       to: /home/vagrant/Code/Laravel/public
 
+databases:
+    - name: homestead
+      type: mysql
+    - name: homestead
+      type: postgresql
+
 variables:
     - key: APP_ENV
       value: local
