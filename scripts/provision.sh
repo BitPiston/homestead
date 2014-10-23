@@ -30,7 +30,7 @@ echo deb http://dl.hhvm.com/ubuntu trusty main | tee /etc/apt/sources.list.d/hhv
 ## MariaDB
 
 apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-add-apt-repository 'deb http://mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu trusty main'
+add-apt-repository 'deb http://mirrors.digitalocean.com/mariadb/repo/10.0/ubuntu trusty main'
 
 # Update Package Lists
 
