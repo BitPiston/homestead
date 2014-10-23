@@ -114,15 +114,21 @@ class Homestead
           s.inline = "sed -i 's/^\\(#{key}\\).*/\\1 \= #{value}/' #{filename}"
         end
       end
+      config.vm.provision "shell" do |s|
+        s.inline = "service php5-fpm restart"
+      end
     end
 
     # Configure All Of The Server Environment Variables
     if settings.has_key?("variables")
       settings["variables"].each do |var|
         config.vm.provision "shell" do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php5/fpm/php-fpm.conf && service php5-fpm restart"
+          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php5/fpm/php-fpm.conf"
           s.args = [var["key"], var["value"]]
         end
+      end
+      config.vm.provision "shell" do |s|
+        s.inline = "service php5-fpm restart"
       end
     end
 
