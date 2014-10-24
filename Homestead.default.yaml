@@ -9,8 +9,10 @@ keys:
     - ~/.ssh/id_rsa
 
 ports:
-    - host: 8000
+    - host: 8000    # HTTP
       guest: 80
+    - host: 44300   # HTTPS
+      guest: 443
     - host: 33060   # MySQL / MariaDB
       guest: 3306
     - host: 54320   # PostgreSQL
