@@ -97,9 +97,9 @@ class Homestead
       config.vm.provision "shell" do |s|
         s.privileged = false
         if (database["type"] == "mysql")
-          s.inline = "mysql --user=\"root\" --password=\"secret\" -e \"CREATE DATABASE $1;\" ; true"
+          s.inline = "mysql --user=\"root\" --password=\"secret\" -e \"CREATE DATABASE IF NOT EXISTS $1;\""
         elsif (database["type"] == "postgresql")
-          s.inline = "sudo -u postgres /usr/bin/createdb --echo --owner=homestead $1 ; true"
+          s.inline = "if ! sudo -u postgres psql -lqt | cut -d \\| -f 1 | grep -w $1; then sudo -u postgres /usr/bin/createdb --echo --owner=homestead $1; fi"
         end
         s.args = [database["name"]]
       end
