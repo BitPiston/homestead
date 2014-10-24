@@ -156,8 +156,25 @@ EOF
 
 # Set The Nginx & PHP-FPM User
 
-sed -i "s/user www-data;/user vagrant;/" /etc/nginx/nginx.conf
-sed -i "s/# server_names_hash_bucket_size.*/server_names_hash_bucket_size 64;/" /etc/nginx/nginx.conf
+cp /vagrant/config/nginx/nginx.conf /etc/nginx/nginx.conf
+cp /vagrant/config/nginx/conf.d/gzip.conf /etc/nginx/nginx/conf.d/gzip.conf
+cp /vagrant/config/nginx/conf.d/ssl.conf /etc/nginx/nginx/conf.d/ssl.conf
+
+if [[ ! -d /etc/nginx/ssl ]]; then
+	mkdir /etc/nginx/ssl/
+fi
+if [[ ! -e /etc/nginx/ssl/dhparam.pem ]]; then
+    openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+fi
+if [[ ! -e /etc/nginx/ssl/server.key ]]; then
+	openssl genrsa -out /etc/nginx/ssl/server.key 2048 2>&1
+fi
+if [[ ! -e /etc/nginx/ssl/server.csr ]]; then
+	openssl req -new -batch -key /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.csr
+fi
+if [[ ! -e /etc/nginx/ssl/server.crt ]]; then
+	openssl x509 -req -days 365 -in /etc/nginx/server.csr -signkey /etc/nginx/server.key -out /etc/nginx/server.crt 2>&1
+fi
 
 sed -i "s/user = www-data/user = vagrant/" /etc/php5/fpm/pool.d/www.conf
 sed -i "s/group = www-data/group = vagrant/" /etc/php5/fpm/pool.d/www.conf
