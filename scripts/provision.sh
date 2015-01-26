@@ -13,7 +13,7 @@ locale-gen en_US.UTF-8
 
 apt-get install -y software-properties-common
 
-apt-add-repository ppa:nginx/stable -y
+apt-add-repository ppa:nginx/development -y
 apt-add-repository ppa:rwky/redis -y
 apt-add-repository ppa:chris-lea/node.js -y
 apt-add-repository ppa:ondrej/php5-5.6 -y
@@ -151,6 +151,7 @@ fastcgi_param	SERVER_ADDR		\$server_addr;
 fastcgi_param	SERVER_PORT		\$server_port;
 fastcgi_param	SERVER_NAME		\$server_name;
 fastcgi_param	HTTPS			\$https if_not_empty;
+fastcgi_param   HTTP_AUTHORIZATION      \$http_authorization if_not_empty;
 fastcgi_param	REDIRECT_STATUS		200;
 EOF
 
