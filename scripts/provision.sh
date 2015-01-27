@@ -93,17 +93,26 @@ sudo sed -i "s/display_errors = .*/display_errors = On/" /etc/php5/cli/php.ini
 sudo sed -i "s/memory_limit = .*/memory_limit = 512M/" /etc/php5/cli/php.ini
 sudo sed -i "s/;date.timezone.*/date.timezone = UTC/" /etc/php5/cli/php.ini
 
-# Install Nginx & PHP-FPM
+# Install Nginx, PHP-FPM & HHVM
 
-apt-get install -y nginx php5-fpm
+apt-get install -y nginx php5-fpm hhvm
+
+# Configure Nginx
 
 rm /etc/nginx/sites-enabled/default
 rm /etc/nginx/sites-available/default
-service nginx restart
-
-# Install HHVM
-
-apt-get install -y hhvm
+rm /etc/nginx/nginx.conf
+rm /etc/nginx/fastcgi_params
+mkdir /etc/nginx/includes/
+cp /vagrant/configs/nginx/nginx.conf /etc/nginx/nginx.conf
+cp /vagrant/configs/nginx/fastcgi_params /etc/nginx/fastcgi_params
+cp /vagrant/configs/nginx/conf.d/gzip.conf /etc/nginx/conf.d/gzip.conf
+cp /vagrant/configs/nginx/conf.d/ssl.conf /etc/nginx/conf.d/ssl.conf
+cp /vagrant/configs/nginx/conf.d/restrictions.conf /etc/nginx/conf.d/restrictions.conf
+cp /vagrant/configs/nginx/includes/common.conf /etc/nginx/includes/common.conf
+cp /vagrant/configs/nginx/includes/restrictions.conf /etc/nginx/includes/restrictions.conf
+cp /vagrant/configs/nginx/includes/php-fpm.conf /etc/nginx/includes/php-fpm.conf
+cp /vagrant/configs/nginx/includes/hhvm.conf /etc/nginx/includes/hhvm.conf
 
 # Configure HHVM To Run As Homestead
 
@@ -130,36 +139,7 @@ echo "xdebug.remote_connect_back = 1" >> /etc/php5/fpm/conf.d/20-xdebug.ini
 echo "xdebug.remote_port = 9000" >> /etc/php5/fpm/conf.d/20-xdebug.ini
 echo "xdebug.max_nesting_level = 1000" >> /etc/php5/fpm/conf.d/20-xdebug.ini
 
-# Copy fastcgi_params to Nginx because they broke it on the PPA
-
-cat > /etc/nginx/fastcgi_params << EOF
-fastcgi_param	QUERY_STRING		\$query_string;
-fastcgi_param	REQUEST_METHOD		\$request_method;
-fastcgi_param	CONTENT_TYPE		\$content_type;
-fastcgi_param	CONTENT_LENGTH		\$content_length;
-fastcgi_param	SCRIPT_FILENAME		\$request_filename;
-fastcgi_param	SCRIPT_NAME		\$fastcgi_script_name;
-fastcgi_param	REQUEST_URI		\$request_uri;
-fastcgi_param	DOCUMENT_URI		\$document_uri;
-fastcgi_param	DOCUMENT_ROOT		\$document_root;
-fastcgi_param	SERVER_PROTOCOL		\$server_protocol;
-fastcgi_param	GATEWAY_INTERFACE	CGI/1.1;
-fastcgi_param	SERVER_SOFTWARE		nginx/\$nginx_version;
-fastcgi_param	REMOTE_ADDR		\$remote_addr;
-fastcgi_param	REMOTE_PORT		\$remote_port;
-fastcgi_param	SERVER_ADDR		\$server_addr;
-fastcgi_param	SERVER_PORT		\$server_port;
-fastcgi_param	SERVER_NAME		\$server_name;
-fastcgi_param	HTTPS			\$https if_not_empty;
-fastcgi_param   HTTP_AUTHORIZATION      \$http_authorization if_not_empty;
-fastcgi_param	REDIRECT_STATUS		200;
-EOF
-
-# Set The Nginx & PHP-FPM User
-
-cp /vagrant/config/nginx/nginx.conf /etc/nginx/nginx.conf
-cp /vagrant/config/nginx/conf.d/gzip.conf /etc/nginx/nginx/conf.d/gzip.conf
-cp /vagrant/config/nginx/conf.d/ssl.conf /etc/nginx/nginx/conf.d/ssl.conf
+# Setup SSL for Nginx
 
 if [[ ! -d /etc/nginx/ssl ]]; then
 	mkdir /etc/nginx/ssl/
@@ -174,8 +154,10 @@ if [[ ! -e /etc/nginx/ssl/server.csr ]]; then
 	openssl req -new -batch -key /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.csr
 fi
 if [[ ! -e /etc/nginx/ssl/server.crt ]]; then
-	openssl x509 -req -days 365 -in /etc/nginx/server.csr -signkey /etc/nginx/server.key -out /etc/nginx/server.crt 2>&1
+	openssl x509 -req -days 365 -in /etc/nginx/ssl/server.csr -signkey /etc/nginx/ssl/server.key -out /etc/nginx/ssl/server.crt 2>&1
 fi
+
+# Set The Nginx & PHP-FPM User
 
 sed -i "s/user = www-data/user = vagrant/" /etc/php5/fpm/pool.d/www.conf
 sed -i "s/group = www-data/group = vagrant/" /etc/php5/fpm/pool.d/www.conf
