@@ -17,6 +17,9 @@ class Homestead
       vb.customize ["modifyvm", :id, "--ostype", "Ubuntu_64"]
     end
 
+    # Enable SSH agent forwarding
+    config.ssh.forward_agent = true
+
     # Vagrant Cachier
     if Vagrant.has_plugin?("vagrant-cachier")
       config.cache.scope = :box
