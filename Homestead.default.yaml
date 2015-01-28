@@ -21,8 +21,8 @@ ports:
       guest: 6379
     - host: 11211   # Memcached
       guest: 11211
-    - host: 35729   # LiveReload
-      guest: 35729
+    - host: 3000    # BrowserSync
+      guest: 3000
 
 folders:
     - map: ~/Code
