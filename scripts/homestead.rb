@@ -41,6 +41,23 @@ class Homestead
       config.vm.network "forwarded_port", guest: port["guest"], host: port["host"] ||= nil
     end
 
+    # Port forwarding setup and removal for running on your host primary IP address
+    if (defined? VagrantPlugins::Triggers && settings["pf_forwarding"])
+      config.trigger.after [:up, :reload, :provision], :stdout => true do
+        system('echo "
+rdr pass on lo0 inet proto tcp from any to self port 80 -> 127.0.0.1 port 8000
+rdr pass on en0 inet proto tcp from any to any port 80 -> 127.0.0.1 port 8000
+rdr pass on en1 inet proto tcp from any to any port 80 -> 127.0.0.1 port 8000
+rdr pass on lo0 inet proto tcp from any to self port 443 -> 127.0.0.1 port 43300
+rdr pass on en0 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
+rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
+" | sudo pfctl -ef - >/dev/null 2>&1; echo "Add Port Forwarding (80 => 8000, 443 => 43300)"')
+      end
+      config.trigger.after [:halt, :suspend, :destroy], :stdout => true do
+        system('sudo pfctl -F all -f /etc/pf.conf >/dev/null 2>&1; echo "Removing Port Forwarding (80 => 8000, 443 => 43300)"')
+      end
+    end
+
     # Configure The Public Key For SSH Access
     config.vm.provision "shell" do |s|
       s.inline = "echo $1 | grep -xq \"$1\" /home/vagrant/.ssh/authorized_keys || echo $1 | tee -a /home/vagrant/.ssh/authorized_keys"

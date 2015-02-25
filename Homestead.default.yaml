@@ -24,6 +24,8 @@ ports:
     - host: 3000    # BrowserSync
       guest: 3000
 
+pf_forwarding: false
+
 folders:
     - map: ~/Code
       to: /home/vagrant/Code
