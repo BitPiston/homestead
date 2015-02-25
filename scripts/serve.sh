@@ -6,8 +6,8 @@ block="server {
     listen 443 ssl spdy;
     listen [::]:443 ssl spdy;
 
-    server_name $1;
-    root $2;
+    server_name $1 $2;
+    root $3;
 
     access_log off;
     error_log /var/log/nginx/$1-error.log error;
@@ -19,7 +19,7 @@ block="server {
         try_files \$uri \$uri/ /index.php\$is_args\$args;
     }
 
-    include includes/$3.conf;
+    include includes/$4.conf;
 }
 "
 

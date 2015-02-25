@@ -78,11 +78,11 @@ class Homestead
     settings["sites"].each do |site|
       config.vm.provision "shell" do |s|
         if (site.has_key?("hhvm") && site["hhvm"])
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 hhvm"
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 hhvm"
         else
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 php-fpm"
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 php-fpm"
         end
-        s.args = [site["map"], site["to"]]
+        s.args = [site["map"], "~^" + site["to"].gsub(/\./, '\\.') + "\\.\\d+\\.\\d+\\.\\d+\\.\\d+\\.xip\\.io$", site["to"]]
       end
     end
 
