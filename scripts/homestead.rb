@@ -37,8 +37,10 @@ class Homestead
     end
 
     # Configure Port Forwarding To The Box
-    settings["ports"].each do |port|
-      config.vm.network "forwarded_port", guest: port["guest"], host: port["host"] ||= nil, protocol: port["protocol"] ||= "tcp"
+    if settings.has_key?("ports")
+      settings["ports"].each do |port|
+        config.vm.network "forwarded_port", guest: port["guest"], host: port["host"] ||= nil, protocol: port["protocol"] ||= "tcp"
+      end
     end
 
     # Port forwarding setup and removal for running on your host primary IP address
