@@ -177,6 +177,11 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
       end
     end
 
+    # Update Composer On Every Provision
+    config.vm.provision "shell" do |s|
+      s.inline = "/usr/local/bin/composer self-update"
+    end
+
     # Configure Blackfire.io
     if settings.has_key?("blackfire")
       config.vm.provision "shell" do |s|
