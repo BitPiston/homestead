@@ -7,7 +7,7 @@ block="server {
     listen [::]:443 ssl spdy;
 
     server_name $1 $2;
-    root $3;
+    root \"$3\";
 
     access_log off;
     error_log /var/log/nginx/$1-error.log error;

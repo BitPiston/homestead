@@ -95,9 +95,9 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
     settings["sites"].each do |site|
       config.vm.provision "shell" do |s|
         if (site.has_key?("hhvm") && site["hhvm"])
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 hhvm"
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 \"$3\" hhvm"
         else
-          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 $3 php-fpm"
+          s.inline = "bash /vagrant/scripts/serve.sh $1 $2 \"$3\" php-fpm"
         end
         s.args = [site["map"], "~^" + site["to"].gsub(/\./, '\\.') + "\\.\\d+\\.\\d+\\.\\d+\\.\\d+\\.xip\\.io$", site["to"]]
       end
