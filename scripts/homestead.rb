@@ -177,5 +177,13 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
       end
     end
 
+    # Configure Blackfire.io
+    if settings.has_key?("blackfire")
+      config.vm.provision "shell" do |s|
+        s.path = "./scripts/blackfire.sh"
+        s.args = [settings["blackfire"][0]["id"], settings["blackfire"][0]["token"]]
+      end
+    end
+
   end
 end
