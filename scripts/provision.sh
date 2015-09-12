@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-# Update Package List
-
-apt-get update
-
 # Force locale to avoid common localization pitfalls
 
 echo "LC_ALL=en_US.UTF-8" >> /etc/default/locale
@@ -41,8 +37,14 @@ echo "deb http://packages.blackfire.io/debian any main" | sudo tee /etc/apt/sour
 # Update Package Lists
 
 apt-get update
+apt-get dist-upgrade -y
 
-apt-get upgrade -y
+# Vmware Tools
+
+apt-get install -y linux-headers-$(uname -r) build-essential
+echo "answer AUTO_KMODS_ENABLED yes" | sudo tee -a /etc/vmware-tools/locations || true
+/usr/bin/vmware-config-tools.pl -d || true
+mkdir -p /mnt/hgfs
 
 # Install Some Basic Packages
 
@@ -186,11 +188,9 @@ groups vagrant
 # Install Node
 
 apt-get install -y nodejs
-sudo su vagrant <<'EOF'
 /usr/bin/npm install -g grunt-cli
 /usr/bin/npm install -g gulp
 /usr/bin/npm install -g bower
-EOF
 
 # Install SQLite
 
@@ -209,12 +209,12 @@ service mysql restart
 
 # Configure MariaDB Remote Access
 
-sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 10.0.2.15/' /etc/mysql/my.cnf
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO root@'10.0.2.2' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+sed -i '/^bind-address/s/bind-address.*=.*/bind-address = 0.0.0.0/' /etc/mysql/my.cnf
+mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO root@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 service mysql restart
 
-mysql --user="root" --password="secret" -e "CREATE USER 'homestead'@'10.0.2.2' IDENTIFIED BY 'secret';"
-mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'homestead'@'10.0.2.2' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
+mysql --user="root" --password="secret" -e "CREATE USER 'homestead'@'0.0.0.0' IDENTIFIED BY 'secret';"
+mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'homestead'@'0.0.0.0' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 mysql --user="root" --password="secret" -e "GRANT ALL ON *.* TO 'homestead'@'%' IDENTIFIED BY 'secret' WITH GRANT OPTION;"
 mysql --user="root" --password="secret" -e "FLUSH PRIVILEGES;"
 service mysql restart
@@ -226,7 +226,7 @@ apt-get install -y postgresql-9.4 postgresql-contrib-9.4
 # Configure Postgres Remote Access
 
 sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.4/main/postgresql.conf
-echo "host    all             all             10.0.2.2/32               md5" | tee -a /etc/postgresql/9.4/main/pg_hba.conf
+echo "host    all             all             0.0.0.0/32               md5" | tee -a /etc/postgresql/9.4/main/pg_hba.conf
 sudo -u postgres psql -c "CREATE ROLE homestead LOGIN UNENCRYPTED PASSWORD 'secret' SUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
 service postgresql restart
 
