@@ -1,11 +1,21 @@
 class Homestead
   def Homestead.configure(config, settings)
     # Configure The Box
-    config.vm.box = "ubuntu/trusty64"
+    config.vm.box = "bento/ubuntu-14.04"
     config.vm.hostname = "homestead"
 
-    # Configure A Private Network IP
-    config.vm.network :private_network, ip: settings["ip"] ||= "10.0.0.100"
+    # Don't replace the default key https://github.com/mitchellh/vagrant/pull/4707
+    config.ssh.insert_key = false
+
+    # Configure A Few VMware Settings and install vmware tools
+    ["vmware_desktop", "vmware_fusion", "vmware_workstation"].each do |vmware|
+      config.vm.provider vmware do |v|
+        v.vmx["displayName"] = "homestead"
+        v.vmx["memsize"] = settings["memory"] ||= 2048
+        v.vmx["numvcpus"] = settings["cpus"] ||= 1
+        v.vmx["guestOS"] = "ubuntu-64"
+      end
+    end
 
     # Configure A Few VirtualBox Settings
     config.vm.provider "virtualbox" do |vb|
