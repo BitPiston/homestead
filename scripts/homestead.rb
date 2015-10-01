@@ -116,12 +116,16 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
     end
 
     # Updating the hosts file with all the sites that are defined in Homestead.yaml
-    if Vagrant.has_plugin?("vagrant-hostsupdater")
+    if Vagrant.has_plugin?("vagrant-hostmanager")
         hosts = []
         settings["sites"].each do |site|
           hosts.push(site["map"])
         end
-        config.hostsupdater.aliases = hosts
+        config.hostmanager.enabled = true
+        config.hostmanager.manage_host = true
+        config.hostmanager.ignore_private_ip = false
+        config.hostmanager.include_offline = true
+        config.hostmanager.aliases = hosts
     end
 
     # Create Databases
