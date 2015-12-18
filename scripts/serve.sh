@@ -7,8 +7,8 @@ xip+="\.\d+\.\d+\.\d+\.\d+\.xip\.io$"
 block="server {
     listen 80;
     listen [::]:80;
-    listen 443 ssl spdy;
-    listen [::]:443 ssl spdy;
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
 
     server_name $1 $xip;
     root \"$2\";
