@@ -143,7 +143,7 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
 
     # Override php.ini settings
     if settings.has_key?("php_config")
-      filename = '/etc/php5/fpm/php.ini'
+      filename = '/etc/php/7.0/fpm/php.ini'
       settings["php_config"].each do |var|
         key = var.map{ |key, value| key }[0]
         value = var.map{ |key, value| value }[0]
@@ -152,7 +152,7 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
         end
       end
       config.vm.provision "shell" do |s|
-        s.inline = "service php5-fpm restart"
+        s.inline = "service php7.0-fpm restart"
       end
     end
 
@@ -160,12 +160,12 @@ rdr pass on en1 inet proto tcp from any to any port 443 -> 127.0.0.1 port 43300
     if settings.has_key?("variables")
       settings["variables"].each do |var|
         config.vm.provision "shell" do |s|
-          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php5/fpm/php-fpm.conf"
+          s.inline = "echo \"\nenv[$1] = '$2'\" >> /etc/php/7.0/fpm/php-fpm.conf"
           s.args = [var["key"], var["value"]]
         end
       end
       config.vm.provision "shell" do |s|
-        s.inline = "service php5-fpm restart"
+        s.inline = "service php7.0-fpm restart"
       end
     end
 

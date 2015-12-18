@@ -67,7 +67,7 @@ ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 apt-get install -y php7.0-cli php7.0-dev php7.0-fpm \
 php7.0-mysql php7.0-pgsql php7.0-sqlite \
 php7.0-json php7.0-curl php7.0-gd \
-php7.0-imap php7.0-imagick php-pear \
+php7.0-imap php-imagick php-pear \
 php-memcached php-redis php-xdebug
 
 # Install Composer
