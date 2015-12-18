@@ -240,7 +240,3 @@ sudo /etc/init.d/beanstalkd start
 # Enable SSH env variable forwarding for GIT_*
 
 sed -i "s/AcceptEnv LANG LC_*/AcceptEnv LANG LC_* GIT_*/" /etc/ssh/sshd_config
-
-# Write Bash Aliases
-
-cp /vagrant/aliases /home/vagrant/.bash_aliases
