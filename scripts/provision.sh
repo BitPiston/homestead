@@ -11,10 +11,14 @@ apt-get install -y software-properties-common
 
 apt-add-repository ppa:nginx/development -y
 apt-add-repository ppa:rwky/redis -y
-apt-add-repository ppa:chris-lea/node.js -y
-apt-add-repository ppa:ondrej/php-7.0 -y
+apt-add-repository ppa:ondrej/php -y
 
 # Add Repositories and Keys
+
+## Node
+
+wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+echo deb https://deb.nodesource.com/node_0.12 trusty main | tee /etc/apt/sources.list.d/nodesource.list
 
 ## HHVM
 
