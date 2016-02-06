@@ -11,10 +11,14 @@ apt-get install -y software-properties-common
 
 apt-add-repository ppa:nginx/development -y
 apt-add-repository ppa:rwky/redis -y
-apt-add-repository ppa:chris-lea/node.js -y
-apt-add-repository ppa:ondrej/php-7.0 -y
+apt-add-repository ppa:ondrej/php -y
 
 # Add Repositories and Keys
+
+## Node
+
+wget -qO- https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add -
+echo deb https://deb.nodesource.com/node_0.12 trusty main | tee /etc/apt/sources.list.d/nodesource.list
 
 ## HHVM
 
@@ -24,7 +28,7 @@ echo deb http://dl.hhvm.com/ubuntu trusty main | tee /etc/apt/sources.list.d/hhv
 ## MariaDB
 
 apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-add-apt-repository 'deb http://mirrors.digitalocean.com/mariadb/repo/10.0/ubuntu trusty main'
+add-apt-repository 'deb http://mirrors.digitalocean.com/mariadb/repo/10.1/ubuntu trusty main'
 
 ## PostgreSQL
 wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
@@ -210,12 +214,12 @@ service mysql restart
 
 # Install Postgres
 
-apt-get install -y postgresql-9.4 postgresql-contrib-9.4
+apt-get install -y postgresql-9.5 postgresql-contrib-9.5
 
 # Configure Postgres Remote Access
 
-sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.4/main/postgresql.conf
-echo "host    all             all             0.0.0.0/32               md5" | tee -a /etc/postgresql/9.4/main/pg_hba.conf
+sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /etc/postgresql/9.5/main/postgresql.conf
+echo "host    all             all             0.0.0.0/32               md5" | tee -a /etc/postgresql/9.5/main/pg_hba.conf
 sudo -u postgres psql -c "CREATE ROLE homestead LOGIN UNENCRYPTED PASSWORD 'secret' SUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;"
 service postgresql restart
 
